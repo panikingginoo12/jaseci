@@ -3,6 +3,8 @@ from jaseci_serv.svc import (
     MailService,
     RedisService,
     TaskService,
+    PromotheusService,
+    ElasticService,
     StripeService,
     PromotheusService,
 )
@@ -41,4 +43,5 @@ class MetaService(Ms):
         self.add_service_builder("task", TaskService)
         self.add_service_builder("mail", MailService)
         self.add_service_builder("promon", PromotheusService)
+        self.add_service_builder("elastic", ElasticService)
         self.add_service_builder("stripe", StripeService)

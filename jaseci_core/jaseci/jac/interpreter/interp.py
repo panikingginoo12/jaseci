@@ -992,9 +992,10 @@ class Interp(VirtualMachine):
         else:
             try:
                 atom_res.value = typ.value(atom_res.value)
-            except Exception:
+            except Exception as e:
                 self.rt_error(
-                    f"Invalid cast of {atom_res.jac_type()} " f"to {jwv(typ.value)}",
+                    f"Invalid cast of {atom_res.jac_type()} "
+                    f"to {jwv(typ.value)}: {e}",
                     kid[0],
                 )
             return atom_res
@@ -1010,13 +1011,21 @@ class Interp(VirtualMachine):
 
         if kid[0].name == "KW_CONTEXT":
             if self.rt_check_type(atom_res.value, [Node, Edge, Walker], kid[0]):
-                return JacValue(self, value=atom_res.value.context)
+                return JacValue(self, ctx=atom_res.value, value=atom_res.value.context)
         elif kid[0].name == "KW_INFO":
             if self.rt_check_type(atom_res.value, [Node, Edge, Walker], kid[0]):
-                return JacValue(self, value=atom_res.value.serialize(detailed=False))
+                return JacValue(
+                    self,
+                    ctx=atom_res.value,
+                    value=atom_res.value.serialize(detailed=False),
+                )
         elif kid[0].name == "KW_DETAILS":
             if self.rt_check_type(atom_res.value, [Node, Edge, Walker], kid[0]):
-                return JacValue(self, value=atom_res.value.serialize(detailed=True))
+                return JacValue(
+                    self,
+                    ctx=atom_res.value,
+                    value=atom_res.value.serialize(detailed=True),
+                )
         return atom_res
 
     def run_dict_built_in(self, jac_ast, atom_res):

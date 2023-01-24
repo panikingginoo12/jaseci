@@ -9,6 +9,7 @@ from jaseci.svc import (
     TaskService,
     StripeService,
     PrometheusService,
+    ElasticService,
     ServiceState as Ss,
 )
 
@@ -93,12 +94,14 @@ class MetaService(CommonService, MetaProperties):
             h.redis = self.get_service("redis", h)
             h.task = self.get_service("task", h)
             h.mail = self.get_service("mail", h)
+            h.elastic = self.get_service("elastic", h)
             h.stripe = self.get_service("stripe", h)
 
             if not self.is_automated():
                 h.mail.start(h)
                 h.redis.start(h)
                 h.task.start(h)
+                h.elastic.start(h)
                 h.stripe.start(h)
 
         return h
@@ -139,6 +142,7 @@ class MetaService(CommonService, MetaProperties):
         self.add_service_builder("task", TaskService)
         self.add_service_builder("mail", MailService)
         self.add_service_builder("promon", PrometheusService)
+        self.add_service_builder("elastic", ElasticService)
         self.add_service_builder("stripe", StripeService)
 
 

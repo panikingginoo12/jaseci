@@ -289,3 +289,20 @@ def create_checkout_session(
         mode=mode,
         **kwargs,
     )
+
+
+@jaseci_action()
+def exec(api: str, *args, **kwargs):
+    apis = api.split(".")
+
+    if not apis:
+        raise Exception("API is required!")
+
+    mod = stripe()
+
+    for api in apis:
+        mod = getattr(mod, api, None)
+        if not mod:
+            raise Exception("Not a valid stripe API!")
+
+    return mod(*args, **kwargs)

@@ -4,6 +4,7 @@ from .task import TaskService
 from .stripe import StripeService
 from .mail import MailService
 from .prometheus import PromotheusService
+from .elastic import ElasticService
 from .meta import MetaService
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "StripeService",
     "MailService",
     "PromotheusService",
+    "ElasticService",
     "MetaService",
 ]
