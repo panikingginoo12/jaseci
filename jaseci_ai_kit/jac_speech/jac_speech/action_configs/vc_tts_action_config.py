@@ -1,16 +1,16 @@
-TEXT_SEG_ACTION_CONFIG = {
-    "module": "jaseci_ai_kit.text_seg",
-    "loaded_module": "jaseci_ai_kit.modules.text_seg.text_seg",
+VC_TTS_ACTION_CONFIG = {
+    "module": "jac_speech.vc_tts",
+    "loaded_module": "jac_speech.vc_tts.vc_tts",
     "remote": {
         "Service": {
             "kind": "Service",
             "apiVersion": "v1",
-            "metadata": {"name": "text-seg", "creationTimestamp": None},
+            "metadata": {"name": "vc-tts", "creationTimestamp": None},
             "spec": {
                 "ports": [
                     {"name": "http", "protocol": "TCP", "port": 80, "targetPort": 80}
                 ],
-                "selector": {"pod": "text-seg"},
+                "selector": {"pod": "vc-tts"},
                 "type": "ClusterIP",
                 "sessionAffinity": "None",
                 "internalTrafficPolicy": "Cluster",
@@ -21,40 +21,40 @@ TEXT_SEG_ACTION_CONFIG = {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
-                "name": "text-seg-up",
+                "name": "vc-tts-up",
                 "creationTimestamp": None,
             },
             "data": {
-                "prod_up": "uvicorn jaseci_ai_kit.text_seg:serv_actions --host 0.0.0.0 --port 80"
+                "prod_up": "uvicorn jac_speech.vc_tts:serv_actions --host 0.0.0.0 --port 80"
             },
         },
         "Deployment": {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
-            "metadata": {"name": "text-seg", "creationTimestamp": None},
+            "metadata": {"name": "vc-tts", "creationTimestamp": None},
             "spec": {
                 "replicas": 1,
-                "selector": {"matchLabels": {"pod": "text-seg"}},
+                "selector": {"matchLabels": {"pod": "vc-tts"}},
                 "template": {
                     "metadata": {
-                        "name": "text-seg",
+                        "name": "vc-tts",
                         "creationTimestamp": None,
-                        "labels": {"pod": "text-seg"},
+                        "labels": {"pod": "vc-tts"},
                     },
                     "spec": {
                         "volumes": [
                             {
                                 "name": "prod-script",
                                 "configMap": {
-                                    "name": "text-seg-up",
+                                    "name": "vc-tts-up",
                                     "defaultMode": 420,
                                 },
                             }
                         ],
                         "containers": [
                             {
-                                "name": "text-seg",
-                                "image": "jaseci/jaseci-ai:1.3.6.3",
+                                "name": "vc-tts",
+                                "image": "jaseci/jac-speech:latest",
                                 "command": ["bash", "-c", "source script/prod_up"],
                                 "ports": [{"containerPort": 80, "protocol": "TCP"}],
                                 "resources": {

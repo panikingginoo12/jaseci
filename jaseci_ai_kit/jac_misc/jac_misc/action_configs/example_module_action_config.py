@@ -1,16 +1,17 @@
-ENT_EXT_ACTION_CONFIG = {
-    "module": "jaseci_ai_kit.ent_ext",
-    "loaded_module": "jaseci_ai_kit.modules.ent_ext.ent_ext",
+EXAMPLE_MODULE_ACTION_CONFIG = {
+    "local": "/jaseci/jaseci_ai_kit/jac_misc/example_module/example_module.py",
+    "module": "jac_misc.example_module",
+    "loaded_module": "jac_misc.example_module.example_module",
     "remote": {
         "Service": {
             "kind": "Service",
             "apiVersion": "v1",
-            "metadata": {"name": "ent-ext", "creationTimestamp": None},
+            "metadata": {"name": "test-module", "creationTimestamp": None},
             "spec": {
                 "ports": [
                     {"name": "http", "protocol": "TCP", "port": 80, "targetPort": 80}
                 ],
-                "selector": {"pod": "ent-ext"},
+                "selector": {"pod": "test-module"},
                 "type": "ClusterIP",
                 "sessionAffinity": "None",
                 "internalTrafficPolicy": "Cluster",
@@ -21,43 +22,42 @@ ENT_EXT_ACTION_CONFIG = {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
-                "name": "ent-ext-up",
+                "name": "test-module-up",
                 "creationTimestamp": None,
             },
             "data": {
-                "prod_up": "uvicorn jaseci_ai_kit.ent_ext:serv_actions --host 0.0.0.0 --port 80"
+                "prod_up": "uvicorn jac_misc.example_module:serv_actions --host 0.0.0.0 --port 80"
             },
         },
         "Deployment": {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
-            "metadata": {"name": "ent-ext", "creationTimestamp": None},
+            "metadata": {"name": "test-module", "creationTimestamp": None},
             "spec": {
                 "replicas": 1,
-                "selector": {"matchLabels": {"pod": "ent-ext"}},
+                "selector": {"matchLabels": {"pod": "test-module"}},
                 "template": {
                     "metadata": {
-                        "name": "ent-ext",
+                        "name": "test-module",
                         "creationTimestamp": None,
-                        "labels": {"pod": "ent-ext"},
+                        "labels": {"pod": "test-module"},
                     },
                     "spec": {
                         "volumes": [
                             {
                                 "name": "prod-script",
-                                "configMap": {"name": "ent-ext-up", "defaultMode": 420},
+                                "configMap": {
+                                    "name": "test-module-up",
+                                    "defaultMode": 420,
+                                },
                             }
                         ],
                         "containers": [
                             {
-                                "name": "ent-ext",
-                                "image": "jaseci/jaseci-ai:1.3.6.3",
+                                "name": "test-module",
+                                "image": "jaseci/jac-misc:latest",
                                 "command": ["bash", "-c", "source script/prod_up"],
                                 "ports": [{"containerPort": 80, "protocol": "TCP"}],
-                                "resources": {
-                                    "requests": {"memory": "5Gi"},
-                                    "limits": {"memory": "6Gi"},
-                                },
                                 "volumeMounts": [
                                     {"name": "prod-script", "mountPath": "/script"}
                                 ],

@@ -1,16 +1,16 @@
-USE_QA_ACTION_CONFIG = {
-    "module": "jaseci_ai_kit.use_qa",
-    "loaded_module": "jaseci_ai_kit.modules.use_qa.use_qa",
+STT_ACTION_CONFIG = {
+    "module": "jac_speech.stt",
+    "loaded_module": "jac_speech.stt.stt",
     "remote": {
         "Service": {
             "kind": "Service",
             "apiVersion": "v1",
-            "metadata": {"name": "use-qa", "creationTimestamp": None},
+            "metadata": {"name": "stt", "creationTimestamp": None},
             "spec": {
                 "ports": [
                     {"name": "http", "protocol": "TCP", "port": 80, "targetPort": 80}
                 ],
-                "selector": {"pod": "use-qa"},
+                "selector": {"pod": "stt"},
                 "type": "ClusterIP",
                 "sessionAffinity": "None",
                 "internalTrafficPolicy": "Cluster",
@@ -21,40 +21,40 @@ USE_QA_ACTION_CONFIG = {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
-                "name": "use-qa-up",
+                "name": "stt-up",
                 "creationTimestamp": None,
             },
             "data": {
-                "prod_up": "uvicorn jaseci_ai_kit.use_qa:serv_actions --host 0.0.0.0 --port 80"
+                "prod_up": "uvicorn jac_speech.stt:serv_actions --host 0.0.0.0 --port 80"
             },
         },
         "Deployment": {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
-            "metadata": {"name": "use-qa", "creationTimestamp": None},
+            "metadata": {"name": "stt", "creationTimestamp": None},
             "spec": {
                 "replicas": 1,
-                "selector": {"matchLabels": {"pod": "use-qa"}},
+                "selector": {"matchLabels": {"pod": "stt"}},
                 "template": {
                     "metadata": {
-                        "name": "use-qa",
+                        "name": "stt",
                         "creationTimestamp": None,
-                        "labels": {"pod": "use-qa"},
+                        "labels": {"pod": "stt"},
                     },
                     "spec": {
                         "volumes": [
                             {
                                 "name": "prod-script",
                                 "configMap": {
-                                    "name": "use-qa-up",
+                                    "name": "stt-up",
                                     "defaultMode": 420,
                                 },
                             }
                         ],
                         "containers": [
                             {
-                                "name": "use-qa",
-                                "image": "jaseci/jaseci-ai:1.3.6.3",
+                                "name": "stt",
+                                "image": "jaseci/jac-speech:latest",
                                 "command": ["bash", "-c", "source script/prod_up"],
                                 "ports": [{"containerPort": 80, "protocol": "TCP"}],
                                 "resources": {

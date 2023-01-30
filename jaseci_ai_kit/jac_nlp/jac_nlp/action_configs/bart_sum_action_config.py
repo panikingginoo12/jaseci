@@ -1,16 +1,16 @@
-PDF_EXT_ACTION_CONFIG = {
-    "module": "jaseci_ai_kit.pdf_ext",
-    "loaded_module": "jaseci_ai_kit.modules.pdf_ext.pdf_ext",
+BART_SUM_ACTION_CONFIG = {
+    "module": "jac_misc.bart_sum",
+    "loaded_module": "jac_misc.bart_sum.bart_sum",
     "remote": {
         "Service": {
             "kind": "Service",
             "apiVersion": "v1",
-            "metadata": {"name": "pdf-ext", "creationTimestamp": None},
+            "metadata": {"name": "bart-sum", "creationTimestamp": None},
             "spec": {
                 "ports": [
                     {"name": "http", "protocol": "TCP", "port": 80, "targetPort": 80}
                 ],
-                "selector": {"pod": "pdf-ext"},
+                "selector": {"pod": "bart-sum"},
                 "type": "ClusterIP",
                 "sessionAffinity": "None",
                 "internalTrafficPolicy": "Cluster",
@@ -21,37 +21,40 @@ PDF_EXT_ACTION_CONFIG = {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
-                "name": "pdf-ext-up",
+                "name": "bart-sum-up",
                 "creationTimestamp": None,
             },
             "data": {
-                "prod_up": "uvicorn jaseci_ai_kit.pdf_ext:serv_actions --host 0.0.0.0 --port 80"
+                "prod_up": "uvicorn jac_misc.bart_sum:serv_actions --host 0.0.0.0 --port 80"
             },
         },
         "Deployment": {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
-            "metadata": {"name": "pdf-ext", "creationTimestamp": None},
+            "metadata": {"name": "bart-sum", "creationTimestamp": None},
             "spec": {
                 "replicas": 1,
-                "selector": {"matchLabels": {"pod": "pdf-ext"}},
+                "selector": {"matchLabels": {"pod": "bart-sum"}},
                 "template": {
                     "metadata": {
-                        "name": "pdf-ext",
+                        "name": "bart-sum",
                         "creationTimestamp": None,
-                        "labels": {"pod": "pdf-ext"},
+                        "labels": {"pod": "bart-sum"},
                     },
                     "spec": {
                         "volumes": [
                             {
                                 "name": "prod-script",
-                                "configMap": {"name": "pdf-ext-up", "defaultMode": 420},
+                                "configMap": {
+                                    "name": "bart-sum-up",
+                                    "defaultMode": 420,
+                                },
                             }
                         ],
                         "containers": [
                             {
-                                "name": "pdf-ext",
-                                "image": "jaseci/jaseci-ai:1.3.6.3",
+                                "name": "bart-sum",
+                                "image": "jaseci/jac-nlp:latest",
                                 "command": ["bash", "-c", "source script/prod_up"],
                                 "ports": [{"containerPort": 80, "protocol": "TCP"}],
                                 "resources": {
