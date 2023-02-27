@@ -25,3 +25,11 @@ class WebtoolTest(CoreTest):
     @jac_testcase("webtool.jac", "get_meta_invalid")
     def test_get_meta_invalid(self, ret):
         self.assertFalse(ret["success"])
+        
+    @jac_testcase("webtool.jac", "get_meta_url_with_fragment")
+    def test_get_meta_url_with_fragment(self, ret):
+        self.assertTrue(ret["success"])
+        self.assertTrue("og" in ret["report"][0])
+        self.assertTrue("meta" in ret["report"][0])
+        self.assertTrue("dc" in ret["report"][0])
+        self.assertTrue("page" in ret["report"][0])

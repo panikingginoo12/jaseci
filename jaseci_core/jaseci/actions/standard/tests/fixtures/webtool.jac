@@ -40,3 +40,17 @@ walker get_meta_invalid {
         }
     }
 }
+
+walker get_meta_url_with_fragment {
+    has url = "https://docs.python.org/2/library/urlparse.html#urlparse.urldefrag";
+    can webtool.get_page_meta;
+
+    root {
+        try {
+            report webtool.get_page_meta(url);
+        } else with error {
+            report error;
+            report:error = error;
+        }
+    }
+}
